@@ -1,0 +1,7 @@
+node_modules/
+bin/
+npm-debug.log
+typings/browser/*
+config/
+
+test.js
