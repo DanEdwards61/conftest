@@ -3,20 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <title>Conference Streaming Test</title>
-  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+
+  <!-- Verto dependencies -->
+  <script src="/jquery/dist/jquery.min.js"></script>
+  <script src="/jquery-json/dist/jquery.json.min.js"></script>
+
+  <!-- Verto library -->
+  <script src="/verto/src/jquery.verto.js"></script>
+  <script src="/verto/src/jquery.FSRTC.js"></script>
+  <script src="/verto/src/jquery.jsonrpcclient.js"></script>
+  
+  <script src="verto.js"></script>
+
 </head>
 <body>
-  <ul class="pages">
-    <li class="login page">
-      <div class="form">
-        <h3 class="title">Conference name</h3>
-        <input class="usernameInput" type="text" maxlength="14" />
-      </div>
-    </li>
-  </ul>
+  
+  <div id="wrtc_app">
+    <div id="ctrl-panel">
+      Enter Conference #
+      <input class="conf_dn" type="text" maxlength="14" />
+      <button v-on:click="joinConference">Join</button>
+    </div>
 
-  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="/main.js"></script>
+    <div id="conferences">
+      Conferences:
+      <ul id="conf-list">
+        <li v-for="conf in conferences">
+          {{ conf }}          
+        </li>
+      </ul>
+    </div>
+  </div>
+  <audio id="audio"/>
+  
+  <script src="main.js"></script>
+
 </body>
 </html>
