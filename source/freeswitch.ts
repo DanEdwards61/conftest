@@ -179,7 +179,7 @@ export module FreeSWITCH {
                     }, 5000 );
             })
         }
-        private conference_list() {
+        public async conference_list() {
             return new Promise<Array<string>>( (resolve, reject) => {
                 let args = `conference list`;
 
@@ -187,12 +187,26 @@ export module FreeSWITCH {
                     .then( (res) => {
 //Conference 3010-172.31.27.163 (2 members rate: 8000 flags: r
                         if (res && res.body) {
-                            // TODO: Need to handle multiple conferences
-                            let spos = res.body.indexOf(' ');
-                            let epos = res.body.indexOf(' ', spos+1);
-                            let cname = res.body.substring(spos+1, epos);
-                            console.log(`conference_list: Processing ${res.body}\ncname=*${cname}*`);
-                            resolve([cname]);
+                            // FS "should" return "No active conferences", but to make sure
+                            // we're going to look for the start of a valid conference line
+                            // and return the empty array if we don't find it.
+                            if (!res.body.startsWith('Conference ')) {
+                                resolve([]);
+                            } else {
+                                // Returned data will contain multiple lines
+                                // First line is "Conference <name> ..." 
+                                // next X lines are the attendees on that conference
+                                // So filter out lines that begin with "Conference ",
+                                // then map each of those, extracting the conference name
+                                let confs = res.body.split('\n')
+                                    .filter( f => f.startsWith('Conference '))
+                                    .map( l => {
+                                        let epos = l.indexOf(' ', 11);
+                                        return l.substring(11, epos);
+                                    });
+                                console.log(util.inspect(confs));
+                                resolve(confs);
+                            }
                         } else {
                             reject(new Error('No body found in response to "conference list"'));
                         }
@@ -204,7 +218,7 @@ export module FreeSWITCH {
                 })
         }
 
-        private get_conference_name(conf: string) {
+        public async get_conference_name(conf: string) {
             return new Promise<string>( (resolve, reject) => {
             this.conference_list()
                 .then( (clist:Array<string>) => {

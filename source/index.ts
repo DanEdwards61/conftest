@@ -5,7 +5,7 @@ import { FreeSWITCH } from './freeswitch';
 
 var app = express();
 var server = require('http').createServer(app);
-var io = require('socket.io')(server);
+var io; 
 var port = process.env.PORT || 3000;
 
 // FS connect data
@@ -19,25 +19,39 @@ server.listen(port, function () {
 });
 
 // Routing
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..', 'node_modules')));
 
 var numUsers = 0;
+var esl_conn = new FreeSWITCH.FSConnection( ESL_HOST, ESL_PORT, ESL_PWD );
 
-io.on('connection', function (socket) {
-  var addedUser = false;
+esl_conn.on('connected', () => {
+  console.log('FS connection established.');
 
-  socket.on('join conference', function (dn) {
-    console.log(`User wants to join conference ${dn}`);
-  });
+  if (!io) {
+    io = require('socket.io')(server);
 
-  socket.on('leave conference', function (dn) {
-      console.log(`User leaving conference ${dn}`)
-  });
+    io.on('connection', function (socket) {
+      console.log(`Processing socket connection from ${socket.id}`);
 
-  socket.on('disconnect', function () {
-      console.log(`disconnect: ${socket.id}`);
-  });
+      esl_conn.conference_list()
+        .then( c_list => {
+          socket.emit('conference list', c_list);
+        })
+
+      socket.on('join conference', function (dn) {
+        console.log(`User wants to join conference ${dn}`);
+      });
+
+      socket.on('leave conference', function (dn) {
+          console.log(`User leaving conference ${dn}`)
+      });
+
+      socket.on('disconnect', function () {
+          console.log(`disconnect: ${socket.id}`);
+      });
+    });
+  }
 });
 
-var esl_conn = new FreeSWITCH.FSConnection( ESL_HOST, ESL_PORT, ESL_PWD );
 
