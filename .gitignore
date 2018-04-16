@@ -5,3 +5,4 @@ typings/browser/*
 config/
 
 test.js
+public/content/

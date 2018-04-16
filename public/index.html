@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <title>Conference Streaming Test</title>
 
-  <!-- Wowza player -->
-  <script type="text/javascript" src="http://player.wowza.com/player/latest/wowzaplayer.min.js"></script>
-
   <!-- Flowplayer -->
   <script src="flowplayer/flowplayer-3.2.13.min.js"></script>
 </head>
@@ -18,34 +15,38 @@
     <input type=button id="reload_url" value="Reload" onclick=""/>
   </div>
  
-  <a href="http://www.mywebsite.com/myVideo.flv"
+  <a href="rtmp://18.222.61.84:1935/live:/myStream"
     style="display:block;width:425px;height:300px;"
     id="player">
   </a>
 
+  <a id="httpstreaming" style="display:block;width:660px;height:350px"></a>
+
+  // Adobe HDS: http://18.222.61.84:1935/live/myStream/manifest.f4m?DVR
+
   <script language="JavaScript">
-    flowplayer("player", "flowplayer/flowplayer-3.2.18.swf");
+    flowplayer("httpstreaming", 
+                "flowplayer/flowplayer-3.2.18.swf", {
+                  plugins: {
+                    f4m: {
+                      url: "flowplayer/flowplayer.f4m-3.2.10.swf",
+                      dvrBufferTime: 12,
+                      liveBufferTime: 12
+                    },
+                    httpstreaming: {
+                      url: "flowplayer/flowplayer.httpstreaming-3.2.11.swf"
+                    }
+                  },
+                  clip: {
+                    url: "http://18.222.61.84:1935/live/myStream/manifest.f4m?DVR",
+                    urlResolvers: ['f4m'],
+                    provider: 'httpstreaming',
+                    autoPlay: false
+                  }
+                }
+              );
   </script>
 
-  <div id="playerElement" style="width:320px; height:120px; padding:0"></div>
 
-
-  <script type="text/javascript">
-    WowzaPlayer.create('playerElement',
-        {
-        "license":"PLAY1-jFxMb-ThP4r-MYfWM-9tKev-cyBK4",
-        "title":"Test player",
-        "description":"test for live app, audio-only",
-        "sourceURL": "http://18.222.61.84:1935/live/1062/playlist.m3u8?DVR",
-        "autoPlay":false,
-        "volume":"75",
-        "mute":false,
-        "loop":false,
-        "audioOnly":true,
-        "uiShowQuickRewind":true,
-        "uiQuickRewindSeconds":"30"
-        }
-    );
-    </script>
 </body>
 </html>
