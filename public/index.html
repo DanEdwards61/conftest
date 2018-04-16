@@ -4,42 +4,48 @@
   <meta charset="UTF-8">
   <title>Conference Streaming Test</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-  <script src="socket.io/socket.io.js"></script>
+  <!-- Wowza player -->
+  <script type="text/javascript" src="http://player.wowza.com/player/latest/wowzaplayer.min.js"></script>
 
-  <!-- Verto dependencies -->
-  <script src="/jquery/dist/jquery.min.js"></script>
-  <script src="/jquery-json/dist/jquery.json.min.js"></script>
-
-  <!-- Verto library -->
-  <script src="/verto/src/jquery.verto.js"></script>
-  <script src="/verto/src/jquery.FSRTC.js"></script>
-  <script src="/verto/src/jquery.jsonrpcclient.js"></script>
-  
-  <script src="verto.js"></script>
-
+  <!-- Flowplayer -->
+  <script src="flowplayer/flowplayer-3.2.13.min.js"></script>
 </head>
 <body>
-  
-  <div id="wrtc_app">
-    <div id="ctrl-panel">
-      Enter Conference #
-      <input class="conf_dn" type="text" maxlength="14" />
-      <button v-on:click="joinConference">Join</button>
-    </div>
 
-    <div id="conferences">
-      Conferences:
-      <ul id="conf-list">
-        <li v-for="conf in conferences">
-          {{ conf }}          
-        </li>
-      </ul>
-    </div>
+  <h2>Wowza Streaming Player</h2>
+  <div id="controls">
+    <input type=text id="url"/>
+    <input type=button id="reload_url" value="Reload" onclick=""/>
   </div>
-  <audio id="audio"/>
-  
-  <script src="main.js"></script>
+ 
+  <a href="http://www.mywebsite.com/myVideo.flv"
+    style="display:block;width:425px;height:300px;"
+    id="player">
+  </a>
 
+  <script language="JavaScript">
+    flowplayer("player", "flowplayer/flowplayer-3.2.18.swf");
+  </script>
+
+  <div id="playerElement" style="width:320px; height:120px; padding:0"></div>
+
+
+  <script type="text/javascript">
+    WowzaPlayer.create('playerElement',
+        {
+        "license":"PLAY1-jFxMb-ThP4r-MYfWM-9tKev-cyBK4",
+        "title":"Test player",
+        "description":"test for live app, audio-only",
+        "sourceURL": "http://18.222.61.84:1935/live/1062/playlist.m3u8?DVR",
+        "autoPlay":false,
+        "volume":"75",
+        "mute":false,
+        "loop":false,
+        "audioOnly":true,
+        "uiShowQuickRewind":true,
+        "uiQuickRewindSeconds":"30"
+        }
+    );
+    </script>
 </body>
 </html>
