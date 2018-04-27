@@ -15,14 +15,7 @@
     <input type=button id="reload_url" value="Reload" onclick=""/>
   </div>
  
-  <a href="rtmp://18.222.61.84:1935/live:/myStream"
-    style="display:block;width:425px;height:300px;"
-    id="player">
-  </a>
-
   <a id="httpstreaming" style="display:block;width:660px;height:350px"></a>
-
-  // Adobe HDS: http://18.222.61.84:1935/live/myStream/manifest.f4m?DVR
 
   <script language="JavaScript">
     flowplayer("httpstreaming", 
@@ -30,15 +23,15 @@
                   plugins: {
                     f4m: {
                       url: "flowplayer/flowplayer.f4m-3.2.10.swf",
-                      dvrBufferTime: 12,
-                      liveBufferTime: 12
+                      dvrBufferTime: 2,
+                      liveBufferTime: 2
                     },
                     httpstreaming: {
                       url: "flowplayer/flowplayer.httpstreaming-3.2.11.swf"
                     }
                   },
                   clip: {
-                    url: "http://18.222.61.84:1935/live/myStream/manifest.f4m?DVR",
+                    url: "http://18.222.61.84:1935/live/testdelay/manifest.f4m",
                     urlResolvers: ['f4m'],
                     provider: 'httpstreaming',
                     autoPlay: false
