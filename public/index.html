@@ -11,8 +11,9 @@
 
   <h2>Wowza Streaming Player</h2>
   <div id="controls">
+    <label>Stream: </label>
     <input type=text id="url"/>
-    <input type=button id="reload_url" value="Reload" onclick=""/>
+    <input type=button id="reload_url" value="Reload" onclick="loadStream(1062)"/>
   </div>
  
   <div id="playback">
@@ -26,7 +27,7 @@
   </div>
     
   <script language="JavaScript">
-    flowplayer("httpstreaming", 
+  var playbackPlayer = flowplayer("httpstreaming", 
                 "flowplayer/flowplayer-3.2.18.swf", {
                   plugins: {
                     f4m: {
@@ -36,35 +37,44 @@
                     httpstreaming: {
                       url: "flowplayer/flowplayer.httpstreaming-3.2.11.swf"
                     }
-                  },
-                  clip: {
-                    url: "http://18.222.61.84:1935/live_record/1062/manifest.f4m?DVR",
-                    urlResolvers: ['f4m'],
-                    provider: 'httpstreaming',
-                    autoPlay: false
                   }
                 }
               );
-  </script>
 
 
-<script language="JavaScript">
-  flowplayer("streaming", 
+var streamingPlayer = flowplayer("streaming", 
               "flowplayer/flowplayer-3.2.18.swf", {
                 plugins: {
                   rtmp: {
                     url: "flowplayer.rtmp-3.2.13.swf",
                     netConnectionUrl: "rtmp://18.222.61.84:1935/live"
                   }
-                },
-                clip: {
-                  url: '1062',
-                  provider: 'rtmp',
-                  autoPlay: false
                 }
               }
             );
+
+  function loadStream( stream ) {
+    console.log('loadStream(' + stream + ')');
+    var clip = streamingPlayer.getClip();
+    streamingPlayer.setClip( 
+                  {
+                    url: stream, 
+                    provider: 'rtmp', 
+                    autoPlay: false
+                  });
+
+    playbackPlayer.setClip(
+                  {
+                    url: "http://18.222.61.84:1935/live_record/" + stream + "/manifest.f4m?DVR",
+                    urlResolvers: ['f4m'],
+                    provider: 'httpstreaming',
+                    autoPlay: false
+                  });
+  }
 </script>
+
+
+
 
 
 </body>
