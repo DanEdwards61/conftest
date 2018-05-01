@@ -15,23 +15,30 @@
     <input type=button id="reload_url" value="Reload" onclick=""/>
   </div>
  
-  <a id="httpstreaming" style="display:block;width:660px;height:350px"></a>
+  <div id="playback">
+    <h3>Playback recording</h3>
+    <div id="httpstreaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+  </div>
 
+  <div id="live">
+    <h3>Live streaming</h3>
+    <div id="streaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+  </div>
+    
   <script language="JavaScript">
     flowplayer("httpstreaming", 
                 "flowplayer/flowplayer-3.2.18.swf", {
                   plugins: {
                     f4m: {
-                      url: "flowplayer/flowplayer.f4m-3.2.10.swf",
-                      dvrBufferTime: 2,
-                      liveBufferTime: 2
+                      url: "flowplayer/flowplayer.f4m-3.2.10.swf"
+                      
                     },
                     httpstreaming: {
                       url: "flowplayer/flowplayer.httpstreaming-3.2.11.swf"
                     }
                   },
                   clip: {
-                    url: "http://18.222.61.84:1935/live/testdelay/manifest.f4m",
+                    url: "http://18.222.61.84:1935/live_record/1062/manifest.f4m?DVR",
                     urlResolvers: ['f4m'],
                     provider: 'httpstreaming',
                     autoPlay: false
@@ -39,6 +46,25 @@
                 }
               );
   </script>
+
+
+<script language="JavaScript">
+  flowplayer("streaming", 
+              "flowplayer/flowplayer-3.2.18.swf", {
+                plugins: {
+                  rtmp: {
+                    url: "flowplayer.rtmp-3.2.13.swf",
+                    netConnectionUrl: "rtmp://18.222.61.84:1935/live"
+                  }
+                },
+                clip: {
+                  url: '1062',
+                  provider: 'rtmp',
+                  autoPlay: false
+                }
+              }
+            );
+</script>
 
 
 </body>
