@@ -12,14 +12,17 @@
   "license": "ISC",
   "dependencies": {
     "@types/express": "^4.11.1",
+    "@types/express-fileupload": "^0.1.1",
     "@types/node": "^9.6.2",
     "esl": "^9.0.0",
     "express": "^4.16.3",
+    "express-fileupload": "^0.4.0",
     "jquery": "^3.3.1",
     "jquery-json": "^2.6.0",
     "server": "^1.0.18",
     "socket.io": "^2.1.0",
     "tsc": "^1.20150623.0",
-    "verto": "0.0.2"
+    "verto": "0.0.2",
+    "vue": "^2.5.16"
   }
 }

@@ -6,26 +6,111 @@
 
   <!-- Flowplayer -->
   <script src="flowplayer/flowplayer-3.2.13.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
 </head>
 <body>
 
-  <h2>Wowza Streaming Player</h2>
-  <div id="controls">
-    <label>Stream: </label>
-    <input type=text id="url"/>
-    <input type=button id="reload_url" value="Reload" onclick="loadStream(1062)"/>
-  </div>
- 
-  <div id="playback">
-    <h3>Playback recording</h3>
-    <div id="httpstreaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
-  </div>
-
-  <div id="live">
-    <h3>Live streaming</h3>
-    <div id="streaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
-  </div>
     
+<hr>
+<div id="calls">
+
+    <h2>{{ app_title }}</h2>
+    <table>
+      <thead>
+        <td>Call name</td>
+        <td>Phone</td>
+        <td>Active</td>
+        <td>Player</td>
+      </thead>
+      <tr v-for="call in calls">
+        <td>{{ call.name }} </td>
+        <td>{{ call.guestPinPhoneNumber }} </td>
+        <td>{{ isActive(call) }} </td>
+        <td>{{ playerType(call) }} </td>
+     </tr>
+    </table>
+    <button v-on:click="reloadCalls">Reload call list</button>
+</div>
+<script>
+  var calls_app = new Vue ({
+    el: "#calls",
+    data: {
+      app_title: "Wowza Streaming Demo",
+      calls: [ ]
+    },
+    methods: {
+      isActive: function(call) {
+        return call.streaming ? "Yes" : "No";
+      },
+
+      playerType: function(call) {
+        if( call.streaming ) {
+          return "Streaming"
+        } else if (call.recordConference) {
+          return "Playback";
+        } else {
+          return "No audio"
+        }
+      },
+      reloadCalls: function () {
+        this.calls = [
+          {"id":1062,
+           "name":"Dan Edwards' no record, streaming stream call",
+           "isActive":true,
+           "guestPinPhoneNumber":"18663854039",
+           "guestPinTollPhoneNumber":"",
+           "recordConference":false,
+           "status":"Available",
+           "streaming":true}
+           , {"id":1063,
+           "name":"Dan Edwards' record, streaming stream call",
+           "isActive":true,
+           "guestPinPhoneNumber":"18663854039",
+           "guestPinTollPhoneNumber":"",
+           "recordConference":true,
+           "status":"Available",
+           "streaming":true}
+           , {"id":1064,
+           "name":"Dan Edwards' no record, no stream stream call",
+           "isActive":true,
+           "guestPinPhoneNumber":"18663854039",
+           "guestPinTollPhoneNumber":"",
+           "recordConference":false,
+           "status":"Available",
+           "streaming":false}
+           , {"id":1063,
+           "name":"Dan Edwards' record, no streaming stream call",
+           "isActive":true,
+           "guestPinPhoneNumber":"18663854039",
+           "guestPinTollPhoneNumber":"",
+           "recordConference":true,
+           "status":"Available",
+           "streaming":false}
+          ];
+      }
+    }
+  })
+</script>
+
+<hr>
+<div id="controls">
+  <label>Stream: </label>
+  <input type=text id="url"/>
+  <input type=button id="reload_url" value="Reload" onclick="loadStream(1062)"/>
+</div>
+
+<div id="playback">
+  <h3>Playback recording</h3>
+  <div id="httpstreaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+</div>
+
+<div id="live">
+  <h3>Live streaming</h3>
+  <div id="streaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+</div>
+
   <script language="JavaScript">
   var playbackPlayer = flowplayer("httpstreaming", 
                 "flowplayer/flowplayer-3.2.18.swf", {
@@ -72,6 +157,7 @@ var streamingPlayer = flowplayer("streaming",
                   });
   }
 </script>
+
 
 
 
