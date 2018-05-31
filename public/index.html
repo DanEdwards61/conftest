@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <title>Conference Streaming Test</title>
 
+  <!-- hls.js -->
+  <script src="hls.js/dist/hls.light.min.js"></script>
+
   <!-- Flowplayer -->
   <script src="flowplayer/flowplayer-3.2.13.min.js"></script>
   
@@ -12,33 +15,56 @@
 </head>
 <body>
 
-    
-<hr>
 <div id="calls">
 
-    <h2>{{ app_title }}</h2>
-    <table>
-      <thead>
-        <td>Call name</td>
-        <td>Phone</td>
-        <td>Active</td>
-        <td>Player</td>
-      </thead>
-      <tr v-for="call in calls">
-        <td>{{ call.name }} </td>
-        <td>{{ call.guestPinPhoneNumber }} </td>
-        <td>{{ isActive(call) }} </td>
-        <td>{{ playerType(call) }} </td>
-     </tr>
-    </table>
-    <button v-on:click="reloadCalls">Reload call list</button>
+  <h2>{{ app_title }}</h2>
+  <div id="configuration">
+    
+  </div>
+  <table>
+    <tr>
+      <td>
+        <table>
+          <thead>
+            <td>Call name</td>
+            <td>Phone</td>
+            <td>Active</td>
+            <td>Player</td>
+          </thead>
+          <tr v-for="call in calls">
+            <td>{{ call.name }} </td>
+            <td>{{ call.guestPinPhoneNumber }} </td>
+            <td>{{ isActive(call) }} </td>
+            <td>
+              <input type=button value="Listen Live" v-if="playerType(call) == 'Streaming'" v-on:click="play(call)"/>
+              <input type=button value="Playback" v-if="playerType(call) == 'Playback'" v-on:click="play(call)"/>
+            </td>
+        </td></tr>
+        </table>
+        <button v-on:click="reloadCalls">Reload call list</button>
+      </td>
+      <td>
+        <div id="memorex" v-show="!active_call.streaming && active_call.recordConference">
+            <h3>Playback recording</h3>
+            <div id="playback" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+          </div>
+          
+          <div id="live" v-show="active_call.streaming">
+            <h3>Live streaming</h3>
+            <div id="streaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+          </div>
+      </td>
+    </tr>
+  </table>
 </div>
+
 <script>
   var calls_app = new Vue ({
     el: "#calls",
     data: {
       app_title: "Wowza Streaming Demo",
-      calls: [ ]
+      calls: [ ],
+      active_call: {streaming: false, recordConference: false}
     },
     methods: {
       isActive: function(call) {
@@ -51,73 +77,73 @@
         } else if (call.recordConference) {
           return "Playback";
         } else {
-          return "No audio"
+          return "No Audio"
         }
       },
-      reloadCalls: function () {
-        this.calls = [
-          {"id":1062,
-           "name":"Dan Edwards' no record, streaming stream call",
-           "isActive":true,
-           "guestPinPhoneNumber":"18663854039",
-           "guestPinTollPhoneNumber":"",
-           "recordConference":false,
-           "status":"Available",
-           "streaming":true}
-           , {"id":1063,
-           "name":"Dan Edwards' record, streaming stream call",
-           "isActive":true,
-           "guestPinPhoneNumber":"18663854039",
-           "guestPinTollPhoneNumber":"",
-           "recordConference":true,
-           "status":"Available",
-           "streaming":true}
-           , {"id":1064,
-           "name":"Dan Edwards' no record, no stream stream call",
-           "isActive":true,
-           "guestPinPhoneNumber":"18663854039",
-           "guestPinTollPhoneNumber":"",
-           "recordConference":false,
-           "status":"Available",
-           "streaming":false}
-           , {"id":1063,
-           "name":"Dan Edwards' record, no streaming stream call",
-           "isActive":true,
-           "guestPinPhoneNumber":"18663854039",
-           "guestPinTollPhoneNumber":"",
-           "recordConference":true,
-           "status":"Available",
-           "streaming":false}
-          ];
+      
+      play: function(call) {
+        //document.getElementById("live").style=(call.streaming ? "display:block;" : "display:none;");
+        //document.getElementById("playback").style=(call.recordConference ? "display:block;" : "display:none;");
+        this.active_call = call;
+
+        if (call.streaming) {
+          if (call.recordConference) {
+            streamingPlayer_record.setClip( 
+                    {
+                      url: call.id, 
+                      provider: 'rtmp', 
+                      autoPlay: false
+                    });
+          } else {
+            streamingPlayer_live.setClip( 
+                    {
+                      url: call.id, 
+                      provider: 'rtmp', 
+                      autoPlay: false
+                    });
+          }
+        } else if (call.recordConference) {
+          playbackPlayer.setClip(
+                  {
+                    url: "http://18.222.61.84:1935/live_record/" + call.id + "/manifest.f4m?DVR",
+                    urlResolvers: ['f4m'],
+                    provider: 'playback',
+                    autoPlay: false
+                  });
+        }
+      },
+
+      setCalls: function(call_list) {
+        this.calls = call_list;
+      },
+
+      reloadCalls: () => {
+        var xhr = new XMLHttpRequest();
+        var self = this;
+        xhr.addEventListener('load', (evt) => {
+          if( xhr.status == 200 ) {
+            console.log(`Call List: ${xhr.response}`)
+            this.calls = JSON.parse(xhr.response);
+          } else {
+            console.log(`Call list request returned status code ${xhr.status} - ${xhr.statusText}`);
+          }
+        });
+
+        xhr.addEventListener('error', (err) => {
+          console.log(`Call list request returned error ${err}`);
+        })
+
+        xhr.open("GET", "http://localhost:3100/calls")
+        xhr.send();
       }
     }
   })
-</script>
 
-<hr>
-<div id="controls">
-  <label>Stream: </label>
-  <input type=text id="url"/>
-  <input type=button id="reload_url" value="Reload" onclick="loadStream(1062)"/>
-</div>
-
-<div id="playback">
-  <h3>Playback recording</h3>
-  <div id="httpstreaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
-</div>
-
-<div id="live">
-  <h3>Live streaming</h3>
-  <div id="streaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
-</div>
-
-  <script language="JavaScript">
-  var playbackPlayer = flowplayer("httpstreaming", 
+  var playbackPlayer = flowplayer("playback", 
                 "flowplayer/flowplayer-3.2.18.swf", {
                   plugins: {
                     f4m: {
                       url: "flowplayer/flowplayer.f4m-3.2.10.swf"
-                      
                     },
                     httpstreaming: {
                       url: "flowplayer/flowplayer.httpstreaming-3.2.11.swf"
@@ -127,7 +153,7 @@
               );
 
 
-var streamingPlayer = flowplayer("streaming", 
+var streamingPlayer_live = flowplayer("streaming", 
               "flowplayer/flowplayer-3.2.18.swf", {
                 plugins: {
                   rtmp: {
@@ -138,29 +164,18 @@ var streamingPlayer = flowplayer("streaming",
               }
             );
 
-  function loadStream( stream ) {
-    console.log('loadStream(' + stream + ')');
-    var clip = streamingPlayer.getClip();
-    streamingPlayer.setClip( 
-                  {
-                    url: stream, 
-                    provider: 'rtmp', 
-                    autoPlay: false
-                  });
+var streamingPlayer_record = flowplayer("streaming", 
+              "flowplayer/flowplayer-3.2.18.swf", {
+                plugins: {
+                  rtmp: {
+                    url: "flowplayer.rtmp-3.2.13.swf",
+                    netConnectionUrl: "rtmp://18.222.61.84:1935/live_record"
+                  }
+                }
+              }
+            );
 
-    playbackPlayer.setClip(
-                  {
-                    url: "http://18.222.61.84:1935/live_record/" + stream + "/manifest.f4m?DVR",
-                    urlResolvers: ['f4m'],
-                    provider: 'httpstreaming',
-                    autoPlay: false
-                  });
-  }
 </script>
-
-
-
-
 
 
 </body>

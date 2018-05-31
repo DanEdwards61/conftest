@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Conference Streaming Test</title>
+
+  <!-- hls.js -->
+  <script src="hls.js/dist/hls.light.min.js"></script>
+
+  <!-- Flowplayer -->
+  <script src="flowplayer/flowplayer-3.2.13.min.js"></script>
+  
+
+</head>
+<body>
+
+    
+<hr>
+<div id="calls">
+
+  <h2>Test Flowplayer</h2>
+    <div id="streaming" style="display:block;width:350px; height:50px; background-color:#12699f;"></div>
+</div>
+
+<script>
+      
+var streamingPlayer_live = flowplayer("streaming", 
+            {
+                live: true,
+                clip: {
+                    sources: [
+                        { type: "application/x-mpegurl", src: "http://18.222.61.84:1935/live/1062_aac/playlist.m3u8?DVR" }
+                ]
+                },
+                hlsjs: {
+
+                }
+              }
+            );
+
+</script>
+
+
+</body>
+</html>

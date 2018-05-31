@@ -9,12 +9,6 @@ var server = require('http').createServer(app);
 var io; 
 var port = process.env.PORT || 3000;
 
-// FS connect data
-const ESL_PWD = '0SMz7TFZnWfDXf5IYJoM';
-const ESL_HOST = '18.222.61.84';
-const ESL_PORT = 8021;
-
-
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
 });
