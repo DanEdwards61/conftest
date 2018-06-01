@@ -1,56 +1,23 @@
 <template>
   <div id="app">
-    
-    <div class="jumbotron">
-      <div class="container">
-      <img src="./assets/logo@2x.png">
-        <h1 class="display-3">{{ title }}</h1>
-        <p>This page provides a simple mechanism to test various options for playing live streamed or previously recorded conference calls.</p>
+
+
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="input-group">
+          <label for="svc_host">Service host url:</label>
+          <div class="input-group-prepend"><div class="input-group-test">http://</div></div>
+          <input id="svc_host" class="form-control" type="text" v-model="svc_host_url">
+        </div>
+      </div>
+      <div class="col-xs-6">
       </div>
     </div>
+    <div class="input-group">
+      <div class="input-group-prepend"><div class="input-group-text">http://</div></div>
+      <input id="id1" class="form-control" type="text">
+    </div>
 
-
-        <div class="container">
-          <!-- Configuration & diagnostics section -->
-          <div class="row">
-            <div class="col-md-6">
-              <h2>Configuration</h2>
-              <p>Select a default configuration, or enter custom information</p>
-              <p><a class="btn btn-default btn-sm" href="#" role="button">Test UAT</a>
-                 <a class="btn btn-default btn-sm" href="#" role="button">Test</a>
-              </p>
-
-              <div class="row">
-                <div class="col">
-                  <div class="form-group">
-                    <b-form-group>
-                      <label for="svc_host">Service host URL:</label>
-                      <b-form-text id="svc_host"></b-form-text>
-                      <label for="nrs_host">NRS API URL:</label>
-                      <b-form-text id="nrs_host"></b-form-text>
-                    </b-form-group>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <h2>Diagnostics</h2>
-              <p>Data collected about your environment.</p>
-              <p><a class="btn btn-secondary" href="#" role="button">Copy to Clipboard &raquo;</a></p>
-            </div>
-          </div>
-
-          <!-- Call list & test player section -->
-          <div class="row">
-              <div class="col-md-6">
-                  <h2>Available Calls</h2>
-              </div>
-              <div class="col-md-6">
-                  <h2>Players</h2>
-              </div>
-          </div>
-  
-        </div> <!-- /container -->
 
     <footer class="container">
       <p>&copy; NetRoadshow 2018</p>
@@ -65,6 +32,13 @@ export default {
     return {
       msg: 'Streaming Conference Call Player Test Page',
       title: 'Streaming Player test page'
+    }
+  },
+  methods: {
+    setDefault(type) {
+      if (type == 'test-uat') {
+
+      }
     }
   }
 }
