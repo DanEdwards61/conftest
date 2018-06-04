@@ -7,6 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href=""
 
     <title>Streaming Player Test</title>
   </head>
@@ -24,45 +25,62 @@
   
         <div class="container">
           <!-- Example row of columns -->
-          <div class="row">
-            <div class="col-md-6">
-              <h2>Configuration</h2>
-              <label for="svc_host">
-                Service Host URL:
-              </label>
-              <input id="svc_host" v-model="svc_host" >
-            </div>
-            <div class="col-md-6">
-              <h2>Diagnostics</h2>
-              <p>Data collected about your environment.</p>
-              <p><a class="btn btn-secondary" href="#" role="button">Copy to Clipboard &raquo;</a></p>
-            </div>
-          </div>
 
-          <div class="row">
-              <div class="col-md-6">
-                  <h2>Available Calls</h2>
-              </div>
-              <div class="col-md-6">
-                  <h2>Players</h2>
-              </div>
-          </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Available Calls</h2>
+                </div>
+                <div class="col-md-6">
+                    <h2>Players</h2>
+                </div>
+            </div>
+    
   
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Configuration</h2>
+                    <select v-model="environment" v-on:change="set_config(environment)">
+                        <option disabled value="">Please select an environment</option>
+                        <option v-for="cfg in config_data" v_bind:value="cfg">
+                            {{ cfg.environment }}
+                        </option>
+                    </select>
+                    <div class="form-group">
+                        <label for="svc_host" class="control-label">Service Host URL</label>
+                        <input id="svc_host" class="form-control" name="svc_host" v-model="svc_host" ><br>
+                        <label for="nrs_host" class="control-label">NRS API URL</label>
+                        <input id="nrs_host" class="form-control" name="nrs_host" v-model="nrs_host" ><br>
+                        <label for="wowza_live" class="control-label">Wowza Live Stream URL</label>
+                        <input id="wowza_list" class="form-control" name="wowza_list" v-model="wowza.live"><br>
+                        <label for="wowza_record" class="control-label">Wowza Playback URL</label>
+                        <input id="wowza_record" class="form-control" name="wowza_record" v-model="wowza.live_record">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h2>Diagnostics</h2>
+                    <p>Data collected about your environment.</p>
+                    <p><a class="btn btn-secondary" href="#" role="button">Copy to Clipboard &raquo;</a></p>
+                </div>
+            </div>
+
           <hr>
   
         </div> <!-- /container -->
       </div>
       </main>
   
-      <footer class="container">
-        <p>&copy; NetRoadshow 2018</p>
-      </footer>
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">&copy; NetRoadshow 2018</span>
+            </div>
+        </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="config.js"></script>
     <script src="main.js"></script>
   </body>
 </html>
