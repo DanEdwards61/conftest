@@ -29,6 +29,13 @@
             <div class="row">
                 <div class="col-md-6">
                     <h2>Available Calls</h2>
+                    <input type=button v-on:click="load_calls()" value="Load calls"/>
+
+                    <ul>
+                        <li v-for="call in confereces">
+                            {{ call.id }} - {{ call.name }}
+                        </li>
+                    </ul>
                 </div>
                 <div class="col-md-6">
                     <h2>Players</h2>

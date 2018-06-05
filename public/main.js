@@ -25,14 +25,8 @@ var app = new Vue({
     environment: '',
     config_data: config_data,
     config: {}
-/*
-    { "environment": "custom",
-              "streamingservice": {
-                "wowza": {"live": "", "live_record": "" }
-                "servers": [ {nodes}]
-              }}
-            */
-    },
+  },
+
   methods: {
     set_config( env ) {
       env = env || this.environment;
@@ -44,9 +38,30 @@ var app = new Vue({
       this.svc_host = `${svc.nodes[0].host}:${svc.nodes[0].port}`
       this.nrs_host = `${svc.api[0].host}:${svc.api[0].port}`
       this.wowza = c.streamingservice.wowza;
+    },
+
+    set_calls( call_list ) {
+      conferences = JSON.parse(call_list);
+    },
+
+    load_calls() {
+      let url = `http://${this.svc_host}/calls`;
+
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("load", (res) => this.set_calls(res.responseText));
+      xhr.addEventListener("error", (err) => {
+        console.log(`Error getting call list: ${JSON.stringify(err)}`)
+      });
+      xhr.addEventListener("progress", (evt) => {
+        console.log(`progress: evt=${JSON.stringify(evt)}`)
+      });
+      
+      xhr.open("GET", url);
+      xhr.send();
     }
   }
 })
+
 
 app.environment = "sandbox";
 app.set_config("sandbox");
