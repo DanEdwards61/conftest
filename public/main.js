@@ -48,7 +48,9 @@ var app = new Vue({
       let url = `http://${this.svc_host}/calls`;
 
       var xhr = new XMLHttpRequest();
-      xhr.addEventListener("load", (res) => this.set_calls(res.responseText));
+      xhr.addEventListener("load", (res) => {
+        this.set_calls(res.currentTarget.responseText);
+      });
       xhr.addEventListener("error", (err) => {
         console.log(`Error getting call list: ${JSON.stringify(err)}`)
       });
