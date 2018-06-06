@@ -42,7 +42,7 @@ var config_data = [{
   "streamingservice": {
     "wowza": {
       "live": "rtmp://ec2-54-174-80-83.compute-1.amazonaws.com:1935/live",
-      "live_record": "rtmp://ec2-54-174-80-83.compute-1.amazonaws.com:1935/live_record"
+      "record": "rtmp://ec2-54-174-80-83.compute-1.amazonaws.com:1935/record"
     },
     
     "servers": {

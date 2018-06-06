@@ -3,7 +3,7 @@
 var blank_config = {
   "environment": "custom",
   "streamingservice": {
-      "wowza": {"live": "", "live_record": ""},
+      "wowza": {"live": "", "record": ""},
       
       "servers": { "nodes": [ {"host": "custom","port": "",}],
                    "api": [{ "host": "", "port": ""}],
@@ -12,58 +12,119 @@ var blank_config = {
     }
 }
 
-var app = new Vue({
-  el: '#app',
-  data: {
-    conferences: [],
-    svc_host: '',
-    nrs_host: '',
-    wowza: {
-      live: '',
-      record: ''
+window.onload = function () {
+  var app = new Vue({
+    el: '#app',
+    data: {
+      conferences: [],
+/*      [
+        {"id":1062,
+         "name":"Dan Edwards' 1st conf stream call",
+         "startTimeUtc":"2018-06-06T20:40:00",
+         "endTimeUtc":"2018-06-06T22:00:00",
+         "isActive":true,
+         "applicationID":0,
+         "guestPinPhoneNumber":"18663854039",
+         "guestPinTollPhoneNumber":"",
+         "notes":null,
+         "createdDateUtc":"0001-01-01T00:00:00",
+         "createdByCoreUserId":"00000000-0000-0000-0000-000000000000",
+         "updatedDateUtc":"0001-01-01T00:00:00",
+         "updatedByCoreUserId":"00000000-0000-0000-0000-000000000000",
+         "recordConference":"N",
+         "status":"Available"
+        }
+      ],
+*/
+      svc_host: '',
+      nrs_host: '',
+      wowza: {
+        live: '',
+        record: ''
+      },
+      environment: '',
+      config_data: config_data,
+      config: {},
+
+      isWebRTCSupported: false,
+      isFlashSupported: false
     },
-    environment: '',
-    config_data: config_data,
-    config: {}
-  },
 
-  methods: {
-    set_config( env ) {
-      env = env || this.environment;
+    methods: {
+      set_config( env ) {
+        env = env || this.environment;
 
-      let c = this.config_data.filter( e => e.environment == env);
-      if ( c.length == 0 ) return;
-      c = c[0];
-      let svc = c.streamingservice.servers;
-      this.svc_host = `${svc.nodes[0].host}:${svc.nodes[0].port}`
-      this.nrs_host = `${svc.api[0].host}:${svc.api[0].port}`
-      this.wowza = c.streamingservice.wowza;
-    },
+        let c = this.config_data.filter( e => e.environment == env);
+        if ( c.length == 0 ) return;
+        c = c[0];
+        let svc = c.streamingservice.servers;
+        this.svc_host = `${svc.nodes[0].host}:${svc.nodes[0].port}`
+        this.nrs_host = `${svc.api[0].host}:${svc.api[0].port}`
+        this.wowza = c.streamingservice.wowza;
+      },
 
-    set_calls( call_list ) {
-      conferences = JSON.parse(call_list);
-    },
+      set_calls( call_list ) {
+        console.log('Replacing conferences ' + JSON.stringify(this.conferences) + ' with ' + call_list);
+        this.conferences = JSON.parse(call_list);
+      },
 
-    load_calls() {
-      let url = `http://${this.svc_host}/calls`;
+      load_calls() {
+        let url = `http://${this.svc_host}/calls`;
 
-      var xhr = new XMLHttpRequest();
-      xhr.addEventListener("load", (res) => {
-        this.set_calls(res.currentTarget.responseText);
-      });
-      xhr.addEventListener("error", (err) => {
-        console.log(`Error getting call list: ${JSON.stringify(err)}`)
-      });
-      xhr.addEventListener("progress", (evt) => {
-        console.log(`progress: evt=${JSON.stringify(evt)}`)
-      });
-      
-      xhr.open("GET", url);
-      xhr.send();
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("load", (res) => {
+          this.set_calls(res.currentTarget.responseText);
+        });
+        xhr.addEventListener("error", (err) => {
+          console.log(`Error getting call list: ${JSON.stringify(err)}`)
+        });
+        xhr.addEventListener("progress", (evt) => {
+          console.log(`progress: evt=${JSON.stringify(evt)}`)
+        });
+        
+        xhr.open("GET", url);
+        xhr.send();
+      },
+
+      select_call( cid ) {
+        debugger;
+      }
+    }
+  })
+
+
+  app.environment = "sandbox";
+  app.set_config("sandbox");
+
+
+  app.isWebRTCSupported = !!window.RTCPeerConnection;
+
+  // The following code is lifted from: https://stackoverflow.com/questions/998245/how-can-i-detect-if-flash-is-installed-and-if-not-display-a-hidden-div-that-inf
+  var hasFlash = false;
+  try {
+    var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
+    if (fo) {
+      hasFlash = true;
+    }
+  } catch (e) {
+    if (navigator.mimeTypes
+          && navigator.mimeTypes['application/x-shockwave-flash'] != undefined
+          && navigator.mimeTypes['application/x-shockwave-flash'].enabledPlugin) {
+      hasFlash = true;
     }
   }
-})
+  app.isFlashSupported = hasFlash;
+}
 
 
-app.environment = "sandbox";
-app.set_config("sandbox");
+function select_call(id) {
+  flowplayer('#player_hls', {
+    live: true,
+    clip: {
+      sources: [
+        { type: "application/x-mpegurl", src: `${app.config.wowza.live}/1062/playlist.m3u8`}
+      ]
+    }
+  }
+  )
+}

@@ -7,7 +7,36 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://releases.flowplayer.org/7.2.6/skin/skin.css">
     
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+
+      <!-- hls.js -->
+<!--      <script src="hls.js/dist/hls.light.min.js"></script> -->
+
+      <!-- Flowplayer -->
+<!--    <script src="flowplayer/flowplayer-3.2.13.min.js"></script> -->
+    <!-- Using hlsjs-lite plugin from Flowplayer -->
+
+    <!-- hls.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/0.9.1/hls.light.min.js"></script>
+    <!-- flowplayer -->
+    <script src="https://releases.flowplayer.org/7.2.6/flowplayer.min.js"></script>
+
+    <!-- WebRTC adapter -->
+    <script src="webrtc-adapter/out/adapter.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+    <script src="config.js"></script>
+
+    <script src="main.js"></script>
+
 
     <title>Streaming Player Test</title>
   </head>
@@ -38,13 +67,31 @@
                     <input type=button v-on:click="load_calls()" value="Load calls"/>
 
                     <ul>
-                        <li v-for="call in confereces">
+                        <li v-for="call in conferences" v_on:click="select_call(call.id)">
                             {{ call.id }} - {{ call.name }}
                         </li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <h2>Players</h2>
+                    <div class="row">
+                        <div id="player_flash_div" >
+                            <p>Flowplayer + Flash</p>
+                            <div id="player_flash"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="player_hls_div">
+                            <p>Flowplayer + HLS</p>
+                            <div id="player_hls"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="player_webrtc_div">
+                            <p>WebRTC</p>
+                            <audio id="player_webrtc"></audio>
+                        </div>
+                    </div>
                 </div>
             </div>
     
@@ -66,7 +113,7 @@
                         <label for="wowza_live" class="control-label">Wowza Live Stream URL</label>
                         <input id="wowza_list" class="form-control" name="wowza_list" v-model="wowza.live"><br>
                         <label for="wowza_record" class="control-label">Wowza Playback URL</label>
-                        <input id="wowza_record" class="form-control" name="wowza_record" v-model="wowza.live_record">
+                        <input id="wowza_record" class="form-control" name="wowza_record" v-model="wowza.record">
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -87,20 +134,6 @@
                 <span class="text-muted">&copy; NetRoadshow 2018</span>
             </div>
         </footer>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 
-      <!-- hls.js -->
-      <script src="hls.js/dist/hls.light.min.js"></script>
-
-      <!-- Flowplayer -->
-    <script src="flowplayer/flowplayer-3.2.13.min.js"></script>
-
-    <script src="config.js"></script>
-    <script src="main.js"></script>
   </body>
 </html>
