@@ -67,35 +67,22 @@
                     <input type=button v-on:click="load_calls()" value="Load calls"/>
 
                     <ul>
-                        <li v-for="call in conferences" v_on:click="select_call(call.id)">
-                            {{ call.id }} - {{ call.name }}
+                        <li v-for="call in conferences">
+                            <a href="#" v-on:click="select_call(call.id)">{{ call.id }} - {{ call.name }}</a>
                         </li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <h2>Players</h2>
                     <div class="row">
-                        <div id="player_flash_div" >
-                            <p>Flowplayer + Flash</p>
-                            <div id="player_flash"></div>
-                        </div>
-                    </div>
-                    <div class="row">
                         <div id="player_hls_div">
                             <p>Flowplayer + HLS</p>
-                            <div id="player_hls"></div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div id="player_webrtc_div">
-                            <p>WebRTC</p>
-                            <audio id="player_webrtc"></audio>
+                            <video id="player_hls"/>
                         </div>
                     </div>
                 </div>
             </div>
     
-  
             <div class="row">
                 <div class="col-md-6">
                     <h2>Configuration</h2>

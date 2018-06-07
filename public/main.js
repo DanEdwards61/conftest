@@ -16,8 +16,8 @@ window.onload = function () {
   var app = new Vue({
     el: '#app',
     data: {
-      conferences: [],
-/*      [
+      conferences: 
+      [
         {"id":1062,
          "name":"Dan Edwards' 1st conf stream call",
          "startTimeUtc":"2018-06-06T20:40:00",
@@ -35,7 +35,7 @@ window.onload = function () {
          "status":"Available"
         }
       ],
-*/
+
       svc_host: '',
       nrs_host: '',
       wowza: {
@@ -87,7 +87,27 @@ window.onload = function () {
       },
 
       select_call( cid ) {
-        debugger;
+        var video = document.getElementById('player_hls');
+        if(Hls.isSupported()) {
+          var hls = new Hls();
+          // http://54.174.80.83:1935/record/1062/playlist.m3u8
+          var wowza_url = this.wowza.record + '/' + cid + '/playlist.m3u8'
+          //hls.loadSource('https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8');
+          hls.loadSource(wowza_url);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MANIFEST_PARSED,function() {
+            video.play();
+        });
+       }
+       // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
+       // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
+       // This is using the built-in support of the plain video element, without using hls.js.
+        else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8';
+          video.addEventListener('canplay',function() {
+            video.play();
+          });
+        }        
       }
     }
   })
