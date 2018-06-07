@@ -76,7 +76,7 @@
                     <h2>Players</h2>
                     <div class="row">
                         <div id="player_hls_div">
-                            <p>Flowplayer + HLS</p>
+                            <p>HLS</p>
                             <video id="player_hls"/>
                         </div>
                     </div>
@@ -84,7 +84,7 @@
             </div>
     
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <h2>Configuration</h2>
                     <select v-model="environment" v-on:change="set_config(environment)">
                         <option disabled value="">Please select an environment</option>
@@ -93,20 +93,18 @@
                         </option>
                     </select>
                     <div class="form-group">
-                        <label for="svc_host" class="control-label">Service Host URL</label>
+                        <label for="svc_host" class="control-label">Streaming Service Host &amp; port</label>
                         <input id="svc_host" class="form-control" name="svc_host" v-model="svc_host" ><br>
-                        <label for="nrs_host" class="control-label">NRS API URL</label>
+                        <label for="nrs_host" class="control-label">NRS API Host &amp; port</label>
                         <input id="nrs_host" class="form-control" name="nrs_host" v-model="nrs_host" ><br>
-                        <label for="wowza_live" class="control-label">Wowza Live Stream URL</label>
-                        <input id="wowza_list" class="form-control" name="wowza_list" v-model="wowza.live"><br>
-                        <label for="wowza_record" class="control-label">Wowza Playback URL</label>
-                        <input id="wowza_record" class="form-control" name="wowza_record" v-model="wowza.record">
+                        <label for="wowza_host" class="control-label">Wowza Host &amp; port</label>
+                        <input id="wowza_host" class="form-control" name="wowza_host" v-model="wowza.host"><br>
+                        <label for="wowza_live" class="control-label">Wowza Live App</label>
+                        <input id="wowza_live" class="form-control" name="wowza_live" v-model="wowza.apps.live">
+                        <label for="wowza_record" class="control-label">Wowza Record App</label>
+                        <input id="wowza_record" class="form-control" name="wowza_record" v-model="wowza.apps.record">
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <h2>Diagnostics</h2>
-                    <p>Data collected about your environment.</p>
-                    <p><a class="btn btn-secondary" href="#" role="button">Copy to Clipboard &raquo;</a></p>
+                    <input type=button v-on:click="apply()" value="Apply changes"/>
                 </div>
             </div>
 
