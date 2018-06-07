@@ -12,12 +12,22 @@ var blank_config = {
     }
 }
 
+function split_host(host_string){
+  var tokens = host_string.split(':');
+  if( tokens.length != 2 ) {
+    alert('host string must be in the form <host_name>:<port number>');
+    return { 'host': '', 'port': ''}
+  }
+
+  return { 'host': tokens[0], 'port': [tokens[1]]}
+}
+
 window.onload = function () {
   var app = new Vue({
     el: '#app',
     data: {
-      conferences: 
-      [
+      conferences: [],
+/*       [
         {"id":1062,
          "name":"Dan Edwards' 1st conf stream call",
          "startTimeUtc":"2018-06-06T20:40:00",
@@ -35,12 +45,16 @@ window.onload = function () {
          "status":"Available"
         }
       ],
-
+ */
       svc_host: '',
       nrs_host: '',
       wowza: {
-        live: '',
-        record: ''
+        host: '',
+        port: '',
+        apps: {
+          live: '',
+          record: ''
+        }
       },
       environment: '',
       config_data: config_data,
@@ -57,10 +71,35 @@ window.onload = function () {
         let c = this.config_data.filter( e => e.environment == env);
         if ( c.length == 0 ) return;
         c = c[0];
-        let svc = c.streamingservice.servers;
-        this.svc_host = `${svc.nodes[0].host}:${svc.nodes[0].port}`
-        this.nrs_host = `${svc.api[0].host}:${svc.api[0].port}`
-        this.wowza = c.streamingservice.wowza;
+        let svc = c.streamingservice.servers[0];
+
+        // We treat the custom environment in a unique way. We don't overwrite the existing data.
+        // Instead, we copy the current data into the custom config object, allowing a user to just
+        // change the bits they need instead of having to completely fill in the whole set of data.
+        if (c.environment == "custom") {
+          svc.node = split_host(this.svc_host);
+          svc.api = split_host(this.nrs_host);
+          svc.wowza.apps = this.wowza.apps;
+        } else {
+          this.svc_host = `${svc.node.host}:${svc.node.port}`;
+          this.nrs_host = `${svc.api.host}:${svc.api.port}`;
+          this.wowza.host = `${svc.wowza.host}:${svc.wowza.port}`
+          this.wowza.apps.live = svc.wowza.apps.live;
+          this.wowza.apps.record = svc.wowza.apps.record;
+        }
+      },
+
+      // Apply changes in UI to the currently config object
+      apply() {
+        env = this.environment;
+        let c= this.config_data.filter( e => e.environment == env);
+        if( c.length == 0 ) return;
+
+        c = c[0];
+        let svc = c.streamingservice.servers[0];
+        svc.node = split_host(this.svc_host);
+        svc.api = split_host(this.nrs_host);
+        svc.wowza.apps = this.wowza.apps;
       },
 
       set_calls( call_list ) {
@@ -88,11 +127,9 @@ window.onload = function () {
 
       select_call( cid ) {
         var video = document.getElementById('player_hls');
+        var wowza_url = `http://${this.wowza.host}/${this.wowza.apps.live}/${cid}/playlist.m3u8`
         if(Hls.isSupported()) {
           var hls = new Hls();
-          // http://54.174.80.83:1935/record/1062/playlist.m3u8
-          var wowza_url = this.wowza.record + '/' + cid + '/playlist.m3u8'
-          //hls.loadSource('https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8');
           hls.loadSource(wowza_url);
           hls.attachMedia(video);
           hls.on(Hls.Events.MANIFEST_PARSED,function() {
@@ -103,7 +140,8 @@ window.onload = function () {
        // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
        // This is using the built-in support of the plain video element, without using hls.js.
         else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8';
+          video.src = wowza_url;
+          //video.src = 'https://video-dev.github.io/streams/x36xhzz/x36xhzz.m3u8';
           video.addEventListener('canplay',function() {
             video.play();
           });
@@ -115,25 +153,7 @@ window.onload = function () {
 
   app.environment = "sandbox";
   app.set_config("sandbox");
-
-
-  app.isWebRTCSupported = !!window.RTCPeerConnection;
-
-  // The following code is lifted from: https://stackoverflow.com/questions/998245/how-can-i-detect-if-flash-is-installed-and-if-not-display-a-hidden-div-that-inf
-  var hasFlash = false;
-  try {
-    var fo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash');
-    if (fo) {
-      hasFlash = true;
-    }
-  } catch (e) {
-    if (navigator.mimeTypes
-          && navigator.mimeTypes['application/x-shockwave-flash'] != undefined
-          && navigator.mimeTypes['application/x-shockwave-flash'].enabledPlugin) {
-      hasFlash = true;
-    }
-  }
-  app.isFlashSupported = hasFlash;
+  setTimeout( () => app.load_calls(), 1000);
 }
 
 
